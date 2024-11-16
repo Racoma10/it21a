@@ -1,13 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title> my activity</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presidential Voting Results - Charts with Chart.js and OOP</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      .chart-container {
+        display: flex;
+        justify-content: space-around;
+        padding: 20px;
+      }
+      .chart-card {
+        width: 600px;
+        height: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="text-align: center">Presidential Voting Results</h1>
+    <div class="chart-container">
+      <!-- Bar Chart -->
+      <div class="chart-card">
+        <canvas id="barChart"></canvas>
+      </div>
 
-</head>
-<h1 id = "Text"> </h1>
+      <!-- Pie Chart -->
+      <div class="chart-card">
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
 
-<body>
-    <script src="script.js"> </script>
+    <script>
+      // ChartCreator Class to handle chart creation
+      class ChartCreator {
+        constructor(chartId, chartType, data, options = {}) {
+          this.chartId = chartId;      // ID of the canvas element
+          this.chartType = chartType;  // Type of the chart (e.g., bar, pie)
+          this.data = data;            // Data for the chart
+          this.options = options;      // Optional configuration for the chart
+        }
 
-</body>
+        // Method to create the chart
+        createChart() {
+          const ctx = document.getElementById(this.chartId).getContext('2d');
+          new Chart(ctx, {
+            type: this.chartType,
+            data: this.data,
+            options: this.options,
+          });
+        }
+      }
+
+      // Fetch data from the JSON file and render charts
+      async function fetchChartData() {
+        // JSON data for the charts (representing votes for the candidates)
+        const data = {
+          "barChart": {
+            "labels": ["Candidate A", "Candidate B", "Candidate C", "Candidate D"],
+            "values": [1200000, 800000, 450000, 600000]
+          },
+          "pieChart": {
+            "labels": ["Candidate A", "Candidate B", "Candidate C", "Candidate D"],
+            "values": [1200000, 800000, 450000, 600000]
+          }
+        };
+
+        // Bar Chart Data
+        const barChartData = {
+          labels: data.barChart.labels,
+          datasets: [{
+            label: 'Number of Votes',
+            data: data.barChart.values,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        };
+
+        const barChartOptions = {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        };
+
+        // Create Bar Chart instance
+        const barChart = new ChartCreator('barChart', 'bar', barChartData, barChartOptions);
+        barChart.createChart();
+
+        // Pie Chart Data
+        const pieChartData = {
+          labels: data.pieChart.labels,
+          datasets: [{
+            data: data.pieChart.values,
+            backgroundColor: ['red', 'blue', 'green', 'yellow'],
+            hoverOffset: 4
+          }]
+        };
+
+        const pieChartOptions = {};
+
+        // Create Pie Chart instance
+        const pieChart = new ChartCreator('pieChart', 'pie', pieChartData, pieChartOptions);
+        pieChart.createChart();
+      }
+
+      // Call the fetchChartData function when the page loads
+      window.onload = fetchChartData;
+    </script>
+  </body>
 </html>
